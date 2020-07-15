@@ -60,7 +60,7 @@ public class DeptServiceImpl implements DeptService {
 
     @Override
     public List<DeptDto> queryAll(DeptQueryCriteria criteria, Boolean isQuery) throws Exception {
-        Sort sort = new Sort(Sort.Direction.ASC, "deptSort");
+        Sort sort =  Sort.by(Sort.Direction.ASC, "deptSort");
         if (isQuery) {
             criteria.setPidIsNull(true);
             List<Field> fields = QueryHelp.getAllFields(criteria.getClass(), new ArrayList<>());

@@ -18,6 +18,7 @@ package me.zhengjie.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ZipUtil;
+import me.zhengjie.dynamic.datasource.config.DynamicEntityManager;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.GenConfig;
 import me.zhengjie.domain.ColumnInfo;
@@ -31,8 +32,11 @@ import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -40,12 +44,19 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import com.alibaba.druid.pool.DruidDataSource;
+import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
+import com.baomidou.dynamic.datasource.annotation.DS;
 
 /**
  * @author Zheng Jie
@@ -57,25 +68,68 @@ public class GeneratorServiceImpl implements GeneratorService {
     private static final Logger log = LoggerFactory.getLogger(GeneratorServiceImpl.class);
     @PersistenceContext
     private EntityManager em;
+    private final DataSource dataSource;
+    private final DynamicEntityManager dynamicEntityManager;
 
     private final ColumnInfoRepository columnInfoRepository;
+    private static final Map<String, Map<String, String>> datasSourceMap = new HashMap<>();
+
+    @Autowired
+    private ApplicationContext applicationContext;
+    static {
+        Map<String, String> sqlMap = new HashMap<>();
+        sqlMap.put("queryTable", "select table_name ,create_time , engine, table_collation, table_comment from "
+            + "information_schema.tables  where table_schema = (select database()) ");
+        sqlMap.put("countTable",
+            "SELECT COUNT(*) from information_schema.tables where table_schema = (select database())");
+
+        datasSourceMap.put("mysql", sqlMap);
+
+        sqlMap = new HashMap<>();
+        sqlMap.put("queryTable",
+            "select table_name, now() as create_time, 'postgresql' as engine, '' as table_collation, '' as table_comment "
+                + "from information_schema.tables " + "where table_schema = 'public'");
+        sqlMap.put("countTable", "SELECT COUNT(*) from information_schema.tables where table_schema = 'public'");
+
+        datasSourceMap.put("postgresql", sqlMap);
+    }
 
     @Override
+    @DS("#header.DataSource")
     public Object getTables() {
+        DynamicRoutingDataSource ds = (DynamicRoutingDataSource)dataSource;
+        DruidDataSource cd = (DruidDataSource)ds.determineDataSource();
+        String url = cd.getUrl();
+        Map<String, String> sqlMap = null;
+        for (Map.Entry<String, Map<String, String>> entry : datasSourceMap.entrySet()) {
+            if (url.contains(entry.getKey())) {
+                sqlMap = entry.getValue();
+            }
+
+        }
         // 使用预编译防止sql注入
-        String sql = "select table_name ,create_time , engine, table_collation, table_comment from information_schema.tables " +
-                "where table_schema = (select database()) " +
-                "order by create_time desc";
+        String sql = sqlMap.get("queryTable") + "order by create_time desc";
         Query query = em.createNativeQuery(sql);
         return query.getResultList();
     }
 
     @Override
+    @DS("#header.DataSource")
     public Object getTables(String name, int[] startEnd) {
+        em=dynamicEntityManager.get();
+        DynamicRoutingDataSource ds = (DynamicRoutingDataSource)dataSource;
+        DruidDataSource cd = (DruidDataSource)ds.determineDataSource();
+        String url = cd.getUrl();
+        Map<String, String> sqlMap = null;
+        for (Map.Entry<String, Map<String, String>> entry : datasSourceMap.entrySet()) {
+            if (url.contains(entry.getKey())) {
+                sqlMap = entry.getValue();
+            }
+
+        }
         // 使用预编译防止sql注入
-        String sql = "select table_name ,create_time , engine, table_collation, table_comment from information_schema.tables " +
-                "where table_schema = (select database()) " +
-                "and table_name like ? order by create_time desc";
+        String sql = sqlMap.get("queryTable") + "and table_name like ? order by create_time desc";
+
         Query query = em.createNativeQuery(sql);
         query.setFirstResult(startEnd[0]);
         query.setMaxResults(startEnd[1] - startEnd[0]);
@@ -83,10 +137,10 @@ public class GeneratorServiceImpl implements GeneratorService {
         List result = query.getResultList();
         List<TableInfo> tableInfos = new ArrayList<>();
         for (Object obj : result) {
-            Object[] arr = (Object[]) obj;
+            Object[] arr = (Object[])obj;
             tableInfos.add(new TableInfo(arr[0], arr[1], arr[2], arr[3], ObjectUtil.isNotEmpty(arr[4]) ? arr[4] : "-"));
         }
-        Query query1 = em.createNativeQuery("SELECT COUNT(*) from information_schema.tables where table_schema = (select database())");
+        Query query1 = em.createNativeQuery(sqlMap.get("countTable"));
         Object totalElements = query1.getSingleResult();
         return PageUtil.toPage(tableInfos, totalElements);
     }
@@ -105,24 +159,19 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Override
     public List<ColumnInfo> query(String tableName) {
         // 使用预编译防止sql注入
-        String sql = "select column_name, is_nullable, data_type, column_comment, column_key, extra from information_schema.columns " +
-                "where table_name = ? and table_schema = (select database()) order by ordinal_position";
+        String sql =
+            "select column_name, is_nullable, data_type, column_comment, column_key, extra from information_schema.columns "
+                + "where table_name = ? and table_schema = (select database()) order by ordinal_position";
         Query query = em.createNativeQuery(sql);
         query.setParameter(1, tableName);
         List result = query.getResultList();
         List<ColumnInfo> columnInfos = new ArrayList<>();
         for (Object obj : result) {
-            Object[] arr = (Object[]) obj;
-            columnInfos.add(
-                    new ColumnInfo(
-                            tableName,
-                            arr[0].toString(),
-                            "NO".equals(arr[1]),
-                            arr[2].toString(),
-                            ObjectUtil.isNotNull(arr[3]) ? arr[3].toString() : null,
-                            ObjectUtil.isNotNull(arr[4]) ? arr[4].toString() : null,
-                            ObjectUtil.isNotNull(arr[5]) ? arr[5].toString() : null)
-            );
+            Object[] arr = (Object[])obj;
+            columnInfos.add(new ColumnInfo(tableName, arr[0].toString(), "NO".equals(arr[1]), arr[2].toString(),
+                ObjectUtil.isNotNull(arr[3]) ? arr[3].toString() : null,
+                ObjectUtil.isNotNull(arr[4]) ? arr[4].toString() : null,
+                ObjectUtil.isNotNull(arr[5]) ? arr[5].toString() : null));
         }
         return columnInfos;
     }
@@ -132,7 +181,9 @@ public class GeneratorServiceImpl implements GeneratorService {
         // 第一种情况，数据库类字段改变或者新增字段
         for (ColumnInfo columnInfo : columnInfoList) {
             // 根据字段名称查找
-            List<ColumnInfo> columns = columnInfos.stream().filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
+            List<ColumnInfo> columns =
+                columnInfos.stream().filter(c -> c.getColumnName().equals(columnInfo.getColumnName()))
+                    .collect(Collectors.toList());
             // 如果能找到，就修改部分可能被字段
             if (CollectionUtil.isNotEmpty(columns)) {
                 ColumnInfo column = columns.get(0);
@@ -151,7 +202,9 @@ public class GeneratorServiceImpl implements GeneratorService {
         // 第二种情况，数据库字段删除了
         for (ColumnInfo columnInfo : columnInfos) {
             // 根据字段名称查找
-            List<ColumnInfo> columns = columnInfoList.stream().filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
+            List<ColumnInfo> columns =
+                columnInfoList.stream().filter(c -> c.getColumnName().equals(columnInfo.getColumnName()))
+                    .collect(Collectors.toList());
             // 如果找不到，就代表字段被删除了，则需要删除该字段
             if (CollectionUtil.isEmpty(columns)) {
                 columnInfoRepository.delete(columnInfo);
@@ -187,7 +240,8 @@ public class GeneratorServiceImpl implements GeneratorService {
     }
 
     @Override
-    public void download(GenConfig genConfig, List<ColumnInfo> columns, HttpServletRequest request, HttpServletResponse response) {
+    public void download(GenConfig genConfig, List<ColumnInfo> columns, HttpServletRequest request,
+        HttpServletResponse response) {
         if (genConfig.getId() == null) {
             throw new BadRequestException("请先配置生成器");
         }

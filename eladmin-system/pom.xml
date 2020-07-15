@@ -19,6 +19,7 @@
     </properties>
 
     <dependencies>
+
         <!-- 代码生成模块 -->
         <dependency>
             <groupId>me.zhengjie</groupId>
@@ -30,6 +31,12 @@
                     <artifactId>eladmin-common</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>nl.paas</groupId>
+            <artifactId>sonar</artifactId>
+            <version>2.5</version>
         </dependency>
 
         <!-- tools 模块包含了 common 和 logging 模块 -->

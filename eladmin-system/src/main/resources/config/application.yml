@@ -18,7 +18,7 @@ spring:
     properties:
       hibernate:
         ddl-auto: none
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        #dialect: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: true
 
   redis:

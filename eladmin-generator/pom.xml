@@ -22,7 +22,11 @@
             <artifactId>eladmin-common</artifactId>
             <version>2.5</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+            <version>3.3.2</version>
+        </dependency>
         <!--模板引擎-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

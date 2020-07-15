@@ -31,6 +31,7 @@ import java.io.File;
 @RequiredArgsConstructor
 public class GenConfigServiceImpl implements GenConfigService {
 
+
     private final GenConfigRepository genConfigRepository;
 
     @Override

@@ -44,6 +44,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,18 +67,21 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleDto> queryAll() {
-        Sort sort = new Sort(Sort.Direction.ASC, "level");
+        Sort sort = Sort.by(Sort.Direction.ASC, "level");
         return roleMapper.toDto(roleRepository.findAll(sort));
     }
 
     @Override
     public List<RoleDto> queryAll(RoleQueryCriteria criteria) {
-        return roleMapper.toDto(roleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder)));
+        return roleMapper.toDto(roleRepository.findAll(
+            (root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder)));
     }
 
     @Override
     public Object queryAll(RoleQueryCriteria criteria, Pageable pageable) {
-        Page<Role> page = roleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+        Page<Role> page = roleRepository
+            .findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder),
+                pageable);
         return PageUtil.toPage(page.map(roleMapper::toDto));
     }
 
@@ -168,15 +172,13 @@ public class RoleServiceImpl implements RoleService {
         // 如果是管理员直接返回
         if (user.getIsAdmin()) {
             permissions.add("admin");
-            return permissions.stream().map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
+            return permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         }
         Set<Role> roles = roleRepository.findByUserId(user.getId());
         permissions = roles.stream().flatMap(role -> role.getMenus().stream())
-                .filter(menu -> StringUtils.isNotBlank(menu.getPermission()))
-                .map(Menu::getPermission).collect(Collectors.toSet());
-        return permissions.stream().map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+            .filter(menu -> StringUtils.isNotBlank(menu.getPermission())).map(Menu::getPermission)
+            .collect(Collectors.toSet());
+        return permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
@@ -207,6 +209,7 @@ public class RoleServiceImpl implements RoleService {
 
     /**
      * 清理缓存
+     *
      * @param id /
      */
     public void delCaches(Long id, List<User> users) {
