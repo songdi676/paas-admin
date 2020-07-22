@@ -33,6 +33,7 @@ public class IssuesController {
     @ApiOperation("查询issues")
     @GetMapping(value = "")
     public ResponseEntity<Object> queryIssues(Issues issues, Page<Issues> ss) {
+        //测试提交
         String userName = SecurityUtils.getCurrentUsername();
         return new ResponseEntity<>(issuesService.page(ss, Wrappers.<Issues>query(issues).eq("author_login", userName)),
             HttpStatus.OK);
