@@ -18,6 +18,7 @@
     <modules>
         <module>sonar</module>
         <module>zentao</module>
+        <module>devCloud</module>
     </modules>
 
 
