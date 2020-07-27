@@ -39,6 +39,12 @@
             <version>2.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>nl.paas</groupId>
+            <artifactId>zentao</artifactId>
+            <version>2.5</version>
+        </dependency>
+
         <!-- tools 模块包含了 common 和 logging 模块 -->
         <dependency>
             <groupId>me.zhengjie</groupId>

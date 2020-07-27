@@ -1,5 +1,6 @@
 package nl.sri.zentao.service.impl;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import nl.sri.zentao.entity.ZtTask;
 import nl.sri.zentao.mapper.ZtTaskMapper;
 import nl.sri.zentao.service.IZtTaskService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
  * @since 2020-07-22
  */
 @Service
+@DS("zt")
 public class ZtTaskServiceImpl extends ServiceImpl<ZtTaskMapper, ZtTask> implements IZtTaskService {
 
 }

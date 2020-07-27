@@ -1,6 +1,8 @@
 package nl.sri.zentao.entity;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -22,6 +24,7 @@ public class ZtGroup implements Serializable {
 
     private String role;
 
+    @TableField("`desc`")
     private String desc;
 
     private String acl;

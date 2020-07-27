@@ -9,6 +9,7 @@ import me.zhengjie.utils.SecurityUtils;
 import nl.sri.sonar.entity.Issues;
 import nl.sri.sonar.service.IIssuesService;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,9 @@ import org.springframework.stereotype.Controller;
 @RequestMapping("/sonar/issues")
 @RequiredArgsConstructor
 public class IssuesController {
-    private final IIssuesService issuesService;
+
+    @Autowired
+    private IIssuesService issuesService;
 
     @ApiOperation("查询issues")
     @GetMapping(value = "")

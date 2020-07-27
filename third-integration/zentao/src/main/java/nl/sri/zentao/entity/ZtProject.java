@@ -47,6 +47,7 @@ public class ZtProject implements Serializable {
 
     private String pri;
 
+    @TableField("`desc`")
     private String desc;
 
     @TableField("openedBy")
@@ -88,6 +89,7 @@ public class ZtProject implements Serializable {
 
     private String whitelist;
 
+    @TableField("`order`")
     private Integer order;
 
     private String deleted;

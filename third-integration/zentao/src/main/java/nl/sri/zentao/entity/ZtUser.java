@@ -61,6 +61,7 @@ public class ZtUser implements Serializable {
 
     private String zipcode;
 
+    @TableField("`join`")
     private LocalDate join;
 
     private Integer visits;
