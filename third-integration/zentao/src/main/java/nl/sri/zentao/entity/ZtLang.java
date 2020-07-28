@@ -18,6 +18,8 @@ public class ZtLang implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
+
     private String lang;
 
     private String module;

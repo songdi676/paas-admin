@@ -20,6 +20,8 @@ public class ZtAction implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
+
     @TableField("objectType")
     private String objectType;
 

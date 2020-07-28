@@ -20,6 +20,8 @@ public class ZtFile implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
+
     private String pathname;
 
     private String title;

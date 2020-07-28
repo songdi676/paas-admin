@@ -23,6 +23,8 @@ public class ZtTodo implements Serializable {
 
     private String account;
 
+    private Integer id;
+
     private LocalDate date;
 
     private Integer begin;

@@ -20,6 +20,8 @@ public class ZtProduct implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
+
     private String name;
 
     private String code;
@@ -30,6 +32,7 @@ public class ZtProduct implements Serializable {
 
     private String status;
 
+    @TableField("`desc`")
     private String desc;
 
     @TableField("PO")
@@ -54,6 +57,7 @@ public class ZtProduct implements Serializable {
     @TableField("createdVersion")
     private String createdVersion;
 
+    @TableField("`order`")
     private Integer order;
 
     private String deleted;

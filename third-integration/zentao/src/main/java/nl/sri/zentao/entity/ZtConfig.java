@@ -18,6 +18,8 @@ public class ZtConfig implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
+
     private String owner;
 
     private String module;

@@ -4,9 +4,17 @@ public class PageInfo {
 
     private Integer pageNum = 1;
 
-    private Integer PageSize = 10;
+    private Integer pageSize = 10;
 
     private Integer total;
+
+    public PageInfo(){}
+
+    public PageInfo(Integer pageNum, Integer pageSize, Integer total){
+        this.pageNum = pageNum;
+        this.pageNum = pageSize;
+        this.total = total;
+    }
 
     public Integer getTotal() {
         return total;
@@ -25,10 +33,10 @@ public class PageInfo {
     }
 
     public Integer getPageSize() {
-        return PageSize;
+        return pageSize;
     }
 
     public void setPageSize(Integer pageSize) {
-        PageSize = pageSize;
+        pageSize = pageSize;
     }
 }

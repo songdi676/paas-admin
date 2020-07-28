@@ -20,6 +20,8 @@ public class ZtImMessage implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
+
     private String gid;
 
     private String cgid;

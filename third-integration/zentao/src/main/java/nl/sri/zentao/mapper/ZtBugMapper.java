@@ -3,6 +3,8 @@ package nl.sri.zentao.mapper;
 import nl.sri.zentao.entity.ZtBug;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.Map;
+
 /**
  * <p>
  *  Mapper 接口
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ZtBugMapper extends BaseMapper<ZtBug> {
 
+    Map<String,Object> getBugInfo();
 }

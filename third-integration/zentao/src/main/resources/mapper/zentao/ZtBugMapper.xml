@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="nl.sri.zentao.mapper.ZtBugMapper">
-
+    <select id="getBugInfo" resultType="java.util.Map">
+        select COUNT(*) as total,
+        (select COUNT(*)from zt_bug where status = 'active') as active ,
+        (select COUNT(*) from zt_bug where status = 'resolved') as resolved,
+        (select COUNT(*) from zt_bug where status = 'closed') as closed
+        from zt_bug where deleted = '0'
+    </select>
 </mapper>
