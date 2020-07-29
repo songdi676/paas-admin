@@ -3,9 +3,9 @@
 <mapper namespace="nl.sri.zentao.mapper.ZtBugMapper">
     <select id="getBugInfo" resultType="java.util.Map">
         select COUNT(*) as total,
-        (select COUNT(*)from zt_bug where status = 'active') as active ,
-        (select COUNT(*) from zt_bug where status = 'resolved') as resolved,
-        (select COUNT(*) from zt_bug where status = 'closed') as closed
-        from zt_bug where deleted = '0'
+        (select COUNT(*)from zt_bug where status = 'active' and deleted = '0' and project = #{project}) as active ,
+        (select COUNT(*) from zt_bug where status = 'resolved' and deleted = '0' and project = #{project}) as resolved,
+        (select COUNT(*) from zt_bug where status = 'closed' and deleted = '0' and project = #{project}) as closed
+        from zt_bug where deleted = '0' and project = #{project}
     </select>
 </mapper>

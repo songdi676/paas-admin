@@ -5,4 +5,22 @@
     <select id="getStatusList" resultType="java.lang.String">
         select `status` from zt_task  group by `status`
     </select>
+
+    <select id="getStatusInfo" resultType="java.util.Map">
+        select COUNT(*) as total,
+        (select COUNT(*) from zt_task where status = 'wait' and deleted = '0' and project = #{project} <if
+            test="userName !=null and userName != ''">and finishedBy = #{userName}</if>) as wait ,
+        (select COUNT(*) from zt_task where status = 'doing' and deleted = '0' and project = #{project} <if
+            test="userName !=null and userName != ''">and finishedBy = #{userName}</if>) as doing ,
+        (select COUNT(*) from zt_task where status = 'done' and deleted = '0' and project = #{project} <if
+            test="userName !=null and userName != ''">and finishedBy = #{userName}</if>) as done ,
+        (select COUNT(*) from zt_task where status = 'pause' and deleted = '0' and project = #{project}<if
+            test="userName !=null and userName != ''">and finishedBy = #{userName}</if>) as pause ,
+        (select COUNT(*) from zt_task where status = 'cancel' and deleted = '0' and project = #{project}<if
+            test="userName !=null and userName != ''">and finishedBy = #{userName}</if>) as cancel ,
+        (select COUNT(*) from zt_task where status = 'closed' and deleted = '0' and project = #{project}<if
+            test="userName !=null and userName != ''">and finishedBy = #{userName}</if>) as closed
+        from zt_task where deleted = '0' and project = #{project}
+        <if test="userName !=null and userName != ''">and finishedBy = #{userName}</if>
+    </select>
 </mapper>

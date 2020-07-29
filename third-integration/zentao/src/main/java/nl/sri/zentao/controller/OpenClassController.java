@@ -3,10 +3,10 @@ package nl.sri.zentao.controller;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import nl.sri.zentao.entity.*;
+import nl.sri.zentao.entity.vo.PieDataBase;
 import nl.sri.zentao.mapper.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -152,14 +148,30 @@ public class OpenClassController {
      * @return
      * @Author wurunxiang
      */
-    @GetMapping("/getUserProjectTotal/{project}")
+    @GetMapping("/getZtTaskInfo/{project}")
     @ResponseBody
     @DS("zt")
-    public Page<ZtTask> getUserProjectTotal(@PathVariable(name = "project") String project) {
-        List<String> statusList = ztTaskMapper.getStatusList();
-        return ztTaskMapper.selectPage(new Page<>(1,Integer.MAX_VALUE),new QueryWrapper<ZtTask>()
-                .in("status", statusList)
-                .eq("project", project));
+    public ResponseVo<Map<String, Object>> getZtTaskInfo(@PathVariable(name = "project") String project) {
+        ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
+        Map<String, Object> statusInfo = ztTaskMapper.getStatusInfo(project, null);
+        responseVo.setContent(statusInfo);
+        return responseVo;
+    }
+
+    /**
+     * 获取迭代里任务分类总数
+     *
+     * @return
+     * @Author wurunxiang
+     */
+    @GetMapping("/getZtTaskInfoByUserName/{project}/{userName}")
+    @ResponseBody
+    @DS("zt")
+    public ResponseVo<Map<String, Object>> getZtTaskInfoByUserName(@PathVariable(name = "project") String project, @PathVariable(name = "userName") String userName) {
+        ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
+        Map<String, Object> statusInfo = ztTaskMapper.getStatusInfo(project, userName);
+        responseVo.setContent(statusInfo);
+        return responseVo;
     }
 
     /**
@@ -176,7 +188,7 @@ public class OpenClassController {
         List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
                 .eq("project", project));
         for (ZtTask item : tasks) {
-            result += Integer.parseInt(item.getEstimate() + "");
+            result += item.getEstimate().intValue();
         }
         return result;
     }
@@ -195,7 +207,7 @@ public class OpenClassController {
         List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
                 .eq("project", project));
         for (ZtTask item : tasks) {
-            result += Integer.parseInt(item.getConsumed() + "");
+            result += item.getConsumed().intValue();
         }
         return result;
     }
@@ -214,7 +226,7 @@ public class OpenClassController {
         List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
                 .eq("project", project));
         for (ZtTask item : tasks) {
-            result += Integer.parseInt(item.getLeft() + "");
+            result += item.getLeft().intValue();
         }
         return result;
     }
@@ -239,9 +251,9 @@ public class OpenClassController {
             if (item.getDeadline() != null) {
                 LocalDate deadline = item.getDeadline();
                 Date date = new Date();
-                if (Integer.parseInt(sdf.format(date)) < deadline.getYear()){
-                    if (Integer.parseInt(sdf1.format(date)) < deadline.getMonthValue()){
-                        if (Integer.parseInt(sdf2.format(date)) < deadline.getDayOfMonth()){
+                if (Integer.parseInt(sdf.format(date)) < deadline.getYear()) {
+                    if (Integer.parseInt(sdf1.format(date)) < deadline.getMonthValue()) {
+                        if (Integer.parseInt(sdf2.format(date)) < deadline.getDayOfMonth()) {
                             result++;
                         }
                     }
@@ -250,6 +262,108 @@ public class OpenClassController {
         }
         return result;
     }
+
+    /**
+     * 获取迭代消耗信息
+     *
+     * @return
+     * @Author wurunxiang
+     */
+    @GetMapping("/getTaskTimeInfo/{project}")
+    @ResponseBody
+    @DS("zt")
+    public ResponseVo<Map<String, Object>> getTaskTimeInfo(@PathVariable(name = "project") String project) {
+        ResponseVo<Map<String, Object>> responseVo=new ResponseVo<>();
+        Integer estimate = 0;
+        Integer consumed = 0;
+        Integer left = 0;
+        Integer deadlineInt = 0;
+        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
+                .eq("project", project));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("mm");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("dd");
+        for (ZtTask item : tasks) {
+            estimate += item.getEstimate().intValue();
+            consumed += item.getConsumed().intValue();
+            left += item.getLeft().intValue();
+            if (item.getDeadline() != null) {
+                LocalDate deadline = item.getDeadline();
+                Date date = new Date();
+                if (Integer.parseInt(sdf.format(date)) < deadline.getYear()) {
+                    if (Integer.parseInt(sdf1.format(date)) < deadline.getMonthValue()) {
+                        if (Integer.parseInt(sdf2.format(date)) < deadline.getDayOfMonth()) {
+                            deadlineInt++;
+                        }
+                    }
+                }
+            }
+        }
+        List<PieDataBase> seriesData = new ArrayList<>();
+        seriesData.add(new PieDataBase("预计消耗",estimate.toString()));
+        seriesData.add(new PieDataBase("已消耗",consumed.toString()));
+        seriesData.add(new PieDataBase("剩余",left.toString()));
+        seriesData.add(new PieDataBase("超时",deadlineInt.toString()));
+        List<String> legendData = new ArrayList<>();
+        legendData.add("预计消耗");
+        legendData.add("已消耗");
+        legendData.add("剩余");
+        legendData.add("超时");
+        Map<String,Object> result = new HashMap<>();
+        result.put("name","迭代时长消耗信息");
+        result.put("legendData",legendData);
+        result.put("seriesData",seriesData);
+        responseVo.setContent(result);
+        return responseVo;
+    }
+
+    /**
+     * 根据用户获取迭代消耗信息
+     *
+     * @return
+     * @Author wurunxiang
+     */
+    @GetMapping("/getTaskTimeInfoByUserName/{project}/{userName}")
+    @ResponseBody
+    @DS("zt")
+    public ResponseVo<Map<String, Object>> getTaskTimeInfoByUserName(@PathVariable(name = "project") String project,
+                                                                     @PathVariable(name = "userName") String userName) {
+        ResponseVo<Map<String, Object>> responseVo=new ResponseVo<>();
+        Map<String, Object> map = new HashMap<>();
+        Integer estimate = 0;
+        Integer consumed = 0;
+        Integer left = 0;
+        Integer deadlineInt = 0;
+        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
+                .eq("project", project)
+                .eq("finishedBy",userName));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("mm");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("dd");
+        for (ZtTask item : tasks) {
+            estimate += item.getEstimate().intValue();
+            consumed += item.getConsumed().intValue();
+            left += item.getLeft().intValue();
+            if (item.getDeadline() != null) {
+                LocalDate deadline = item.getDeadline();
+                Date date = new Date();
+                if (Integer.parseInt(sdf.format(date)) < deadline.getYear()) {
+                    if (Integer.parseInt(sdf1.format(date)) < deadline.getMonthValue()) {
+                        if (Integer.parseInt(sdf2.format(date)) < deadline.getDayOfMonth()) {
+                            deadlineInt++;
+                        }
+                    }
+                }
+            }
+        }
+        map.put("estimate",estimate);
+        map.put("consumed",consumed);
+        map.put("left",left);
+        map.put("deadlineInt",deadlineInt);
+        responseVo.setContent(map);
+        return responseVo;
+    }
+
 
     /**
      * (个人效率指标)迭代分配任务数
@@ -285,7 +399,7 @@ public class OpenClassController {
     }
 
     /**
-     * (个人效率指标)迭代进行中的任务数
+     * (个人效率指标)迭代关闭的任务数
      *
      * @return
      * @Author wurunxiang
@@ -336,6 +450,7 @@ public class OpenClassController {
         Integer consumed = 0;
         List<ZtTask> ztTasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
                 .eq("project", project)
+                .eq("status", "done")
                 .eq("assignedTo", userName));
         for (ZtTask item : ztTasks) {
             consumed += Integer.parseInt(item.getConsumed() + "");
@@ -388,8 +503,8 @@ public class OpenClassController {
         ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         ZtProject ztProject = ztProjectMapper.selectById(projectId);
         Map<String, Object> result = new HashMap<>();
-        result.put("begin", ztProject.getBegin());
-        result.put("end", ztProject.getEnd());
+        result.put("begin", ztProject.getBegin().getYear() + ":" + ztProject.getBegin().getMonthValue() + ":" + ztProject.getBegin().getDayOfMonth());
+        result.put("end", ztProject.getEnd().getYear() + ":" + ztProject.getEnd().getMonthValue() + ":" + ztProject.getEnd().getDayOfMonth());
         responseVo.setContent(result);
         return responseVo;
     }
@@ -451,8 +566,8 @@ public class OpenClassController {
     public ResponseVo<List<ZtProject>> getProductProjectList(@RequestBody RequestVo<String> req) {
         ResponseVo<List<ZtProject>> responseVo = new ResponseVo<>();
         QueryWrapper<ZtProjectproduct> wrapper = new QueryWrapper<>();
-        if (req.getParams() != null){
-            wrapper.eq("product",req.getParams());
+        if (req.getParams() != null) {
+            wrapper.eq("product", req.getParams());
         }
         List<ZtProjectproduct> ztProjectproducts = ztProjectproductMapper.selectList(wrapper);
         List<Integer> projects = new ArrayList<>();
@@ -465,17 +580,18 @@ public class OpenClassController {
     }
 
     /**
-     * 根据产品id获取迭代列表
+     * 根据产品id获取bug信息
      *
      * @return
      * @Author wurunxiang
      */
-    @GetMapping("/getBugInfo")
+    @GetMapping("/getBugInfo/{projectId}")
     @ResponseBody
     @DS("zt")
-    public ResponseVo<Map<String,Object>> getBugInfo() {
-        ResponseVo<Map<String,Object>> responseVo = new ResponseVo<>();
-        responseVo.setContent(ztBugMapper.getBugInfo());
+    public ResponseVo<Map<String, Object>> getBugInfo(@PathVariable("projectId") String projectId) {
+        ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
+        responseVo.setContent(ztBugMapper.getBugInfo(projectId));
         return responseVo;
     }
+
 }

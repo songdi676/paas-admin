@@ -12,7 +12,7 @@ public class PageInfo {
 
     public PageInfo(Integer pageNum, Integer pageSize, Integer total){
         this.pageNum = pageNum;
-        this.pageNum = pageSize;
+        this.pageSize = pageSize;
         this.total = total;
     }
 
@@ -37,6 +37,6 @@ public class PageInfo {
     }
 
     public void setPageSize(Integer pageSize) {
-        pageSize = pageSize;
+        this.pageSize = pageSize;
     }
 }

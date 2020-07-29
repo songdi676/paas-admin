@@ -2,6 +2,7 @@ package nl.sri.zentao.mapper;
 
 import nl.sri.zentao.entity.ZtBug;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Map;
 
@@ -15,5 +16,5 @@ import java.util.Map;
  */
 public interface ZtBugMapper extends BaseMapper<ZtBug> {
 
-    Map<String,Object> getBugInfo();
+    Map<String,Object> getBugInfo(@Param("project") String project);
 }
