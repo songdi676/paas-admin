@@ -41,6 +41,7 @@ public class AppRun {
     public static final DateTimeFormatter DFY_MD_HMS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static void main(String[] args) {
+        System.out.println(LocalDateTime.now());
         SpringApplication.run(AppRun.class, args);
     }
 
@@ -73,9 +74,19 @@ public class AppRun {
         }
 
         client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload())
-            .rolling().edit().editMetadata().addToLabels("webhook-update", DFY_MD_HMS.format(LocalDateTime.now()))
-            .endMetadata().editSpec().editTemplate().editSpec()
-            .withContainers(Collections.singletonList(updatedContainer)).endSpec().endTemplate().endSpec().done();
+            .rolling()
+            .edit()
+            .editMetadata()
+            .addToLabels("webhook-update", LocalDateTime.now().toString())
+            .endMetadata()
+            .editSpec()
+            .editTemplate()
+            .editSpec()
+            .withContainers(Collections.singletonList(updatedContainer))
+            .endSpec()
+            .endTemplate()
+            .endSpec()
+            .done();
         return "update successfully";
     }
 
