@@ -15,6 +15,10 @@
  */
 package nl.sri.webhook;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -23,8 +27,10 @@ import java.util.Date;
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerBuilder;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.utils.IOHelpers;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -38,7 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @SpringBootApplication
 public class AppRun {
-    public static final DateTimeFormatter DFY_MD_HMS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter DFY_MD_HMS = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
 
     public static void main(String[] args) {
         System.out.println(LocalDateTime.now());
@@ -58,7 +64,14 @@ public class AppRun {
      * @return /
      */
     @GetMapping("/deployment")
-    public String index(UpdateRequest updateRequest) {
+    public String index(UpdateRequest updateRequest) throws IOException {
+        /*File file2 = new File(
+            "D:\\config33");
+        FileReader reader = new FileReader(file2);
+        String kubeconfigContents = IOHelpers.readFully(reader);
+        Config config=Config.fromKubeconfig(null,kubeconfigContents,"D:\\config33");
+        KubernetesClient client = new DefaultKubernetesClient(config);*/
+
         KubernetesClient client = new DefaultKubernetesClient();
         Deployment deployment =
             client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload())
@@ -72,12 +85,15 @@ public class AppRun {
         if (updatedContainer == null) {
             return "没有找到容器" + updateRequest.getContainer();
         }
-
         client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload())
-            .rolling()
+            .scale(0);
+
+
+       client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload())
+            //.rolling()
             .edit()
             .editMetadata()
-            .addToLabels("webhook-update", LocalDateTime.now().toString())
+            .addToLabels("webhook-update","T"+DFY_MD_HMS.format(LocalDateTime.now()))
             .endMetadata()
             .editSpec()
             .editTemplate()
@@ -87,6 +103,8 @@ public class AppRun {
             .endTemplate()
             .endSpec()
             .done();
+        client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload())
+            .scale(deployment.getSpec().getReplicas());
         return "update successfully";
     }
 
