@@ -28,7 +28,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/zentao")
 @RequiredArgsConstructor
-@DS("#header.DataSource")
+@DS("#header.zentaoDataSource")
 public class OpenClassController {
 
     @Autowired

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/zentao/task")
 @RequiredArgsConstructor
-@DS("#header.DataSource")
+@DS("#header.zentaoDataSource")
 public class TaskController {
 
     private final IZtTaskService ztTaskService;
