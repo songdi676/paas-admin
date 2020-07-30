@@ -1,6 +1,8 @@
 package nl.sri.zentao.entity;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,6 +30,7 @@ public class ZtDept implements Serializable {
 
     private Integer grade;
 
+    @TableField("`order`")
     private Integer order;
 
     private String position;

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -82,7 +83,11 @@ public class OpenClassController {
     public ResponseVo<List<ZtUser>> getUserList(@RequestBody RequestVo<ZtUser> requestVo) {
         ResponseVo<List<ZtUser>> responseVo = new ResponseVo<>();
         List<ZtUser> result = new ArrayList<>();
-        Page<ZtUser> ztUserPage = ztUserMapper.selectPage(new Page<ZtUser>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()), new QueryWrapper<ZtUser>());
+        QueryWrapper<ZtUser> ztUserQueryWrapper = new QueryWrapper<>();
+        if (requestVo.getParams().getDept()!=null){
+            ztUserQueryWrapper.eq("dept",requestVo.getParams().getDept());
+        }
+        Page<ZtUser> ztUserPage = ztUserMapper.selectPage(new Page<ZtUser>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()), ztUserQueryWrapper);
         List<ZtUser> ztUsers = ztUserPage.getRecords();
         List<ZtGroup> ztGroups = ztGroupMapper.selectList(new QueryWrapper<>());
         PageInfo pageInfo = new PageInfo();
@@ -491,6 +496,96 @@ public class OpenClassController {
         return result;
     }
 
+
+    /**
+     * 迭代分配任务信息
+     *
+     * @return
+     * @Author wurunxiang
+     */
+    @GetMapping("/getTaskInfo/{project}")
+    @ResponseBody
+    @DS("zt")
+    public ResponseVo<List<PieDataBase>> getTaskInfo(@PathVariable(name = "project") String project) {
+        ResponseVo<List<PieDataBase>> responseVo=new ResponseVo<>();
+        List<ZtTask> ztTasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
+                .eq("project", project));
+        Integer total = ztTasks.size();
+        Integer doing = 0;
+        Integer closed = 0;
+        Integer done = 0;
+        Integer deadLine = 0;
+        for (ZtTask ztTask:ztTasks){
+            if ("doing".equals(ztTask.getStatus())){
+                doing++;
+            }
+            if ("closed".equals(ztTask.getStatus())){
+                closed++;
+            }
+            if ("done".equals(ztTask.getStatus())){
+                done++;
+            }
+            if ("deadLine".equals(ztTask.getStatus())){
+                deadLine++;
+            }
+        }
+        NumberFormat nt = NumberFormat.getPercentInstance();
+        nt.setMinimumFractionDigits(2);
+        List<PieDataBase> seriesData = new ArrayList<>();
+        seriesData.add(new PieDataBase("进行中："+nt.format(doing.doubleValue()/total.doubleValue()),doing.toString()));
+        seriesData.add(new PieDataBase("关闭："+nt.format(closed.doubleValue()/total.doubleValue()),closed.toString()));
+        seriesData.add(new PieDataBase("完成："+nt.format(done.doubleValue()/total.doubleValue()),done.toString()));
+        seriesData.add(new PieDataBase("超时："+nt.format(deadLine.doubleValue()/total.doubleValue()),deadLine.toString()));
+        responseVo.setContent(seriesData);
+        return responseVo;
+    }
+
+    /**
+     * (个人效率指标)迭代分配任务信息
+     *
+     * @return
+     * @Author wurunxiang
+     */
+    @GetMapping("/getTaskInfoByUserName/{project}/{userName}")
+    @ResponseBody
+    @DS("zt")
+    public ResponseVo<List<PieDataBase>> getTaskInfoByUserName(@PathVariable(name = "project") String project,
+                                         @PathVariable(name = "userName") String userName) {
+        ResponseVo<List<PieDataBase>> responseVo=new ResponseVo<>();
+        List<ZtTask> ztTasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
+                .eq("project", project)
+                .eq("assignedTo", userName));
+        Integer total = ztTasks.size();
+        Integer doing = 0;
+        Integer closed = 0;
+        Integer done = 0;
+        Integer deadLine = 0;
+        for (ZtTask ztTask:ztTasks){
+            if ("doing".equals(ztTask.getAssignedTo())){
+                doing++;
+            }
+            if ("closed".equals(ztTask.getAssignedTo())){
+                closed++;
+            }
+            if ("done".equals(ztTask.getAssignedTo())){
+                done++;
+            }
+            if ("deadLine".equals(ztTask.getAssignedTo())){
+                deadLine++;
+            }
+        }
+        NumberFormat nt = NumberFormat.getPercentInstance();
+        nt.setMinimumFractionDigits(2);
+        List<PieDataBase> seriesData = new ArrayList<>();
+        seriesData.add(new PieDataBase("进行中："+nt.format(doing/total),doing.toString()));
+        seriesData.add(new PieDataBase("关闭："+nt.format(closed/total),closed.toString()));
+        seriesData.add(new PieDataBase("完成："+nt.format(done/total),done.toString()));
+        seriesData.add(new PieDataBase("超时："+nt.format(deadLine/total),deadLine.toString()));
+        responseVo.setContent(seriesData);
+        return responseVo;
+    }
+
+
     /**
      * 获取迭代周期
      *
@@ -595,4 +690,19 @@ public class OpenClassController {
         return responseVo;
     }
 
+
+    /**
+     * 获取分组信息
+     *
+     * @return
+     * @Author wurunxiang
+     */
+    @GetMapping("/getDeptInfo")
+    @ResponseBody
+    @DS("zt")
+    public ResponseVo<List<ZtDept>> getDeptInfo() {
+        ResponseVo<List<ZtDept>> responseVo = new ResponseVo<>();
+        responseVo.setContent(ztDeptMapper.selectList(new QueryWrapper<ZtDept>()));
+        return responseVo;
+    }
 }
