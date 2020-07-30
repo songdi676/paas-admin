@@ -310,11 +310,13 @@ public class OpenClassController {
         seriesData.add(new PieDataBase("已消耗",consumed.toString()));
         seriesData.add(new PieDataBase("剩余",left.toString()));
         seriesData.add(new PieDataBase("超时",deadlineInt.toString()));
+        seriesData.add(new PieDataBase("昨日消耗",ztTaskMapper.getConsumedSum(project,LocalDate.now())));
         List<String> legendData = new ArrayList<>();
         legendData.add("预计消耗");
         legendData.add("已消耗");
         legendData.add("剩余");
         legendData.add("超时");
+        legendData.add("昨日消耗");
         Map<String,Object> result = new HashMap<>();
         result.put("name","迭代时长消耗信息");
         result.put("legendData",legendData);
@@ -505,7 +507,6 @@ public class OpenClassController {
      */
     @GetMapping("/getTaskInfo/{project}")
     @ResponseBody
-    @DS("zt")
     public ResponseVo<List<PieDataBase>> getTaskInfo(@PathVariable(name = "project") String project) {
         ResponseVo<List<PieDataBase>> responseVo=new ResponseVo<>();
         List<ZtTask> ztTasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
@@ -699,7 +700,6 @@ public class OpenClassController {
      */
     @GetMapping("/getDeptInfo")
     @ResponseBody
-    @DS("zt")
     public ResponseVo<List<ZtDept>> getDeptInfo() {
         ResponseVo<List<ZtDept>> responseVo = new ResponseVo<>();
         responseVo.setContent(ztDeptMapper.selectList(new QueryWrapper<ZtDept>()));

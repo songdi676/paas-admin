@@ -23,4 +23,8 @@
         from zt_task where deleted = '0' and project = #{project}
         <if test="userName !=null and userName != ''">and finishedBy = #{userName}</if>
     </select>
+
+    <select id="getConsumedSum" resultType="java.lang.String">
+        select COUNT(consumed) as consumedSum from zt_taskestimate where task in (select id from zt_task where project = #{project}) and  date = #{date}
+    </select>
 </mapper>

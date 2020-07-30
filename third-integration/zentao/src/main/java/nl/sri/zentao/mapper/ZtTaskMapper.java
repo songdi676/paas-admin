@@ -5,6 +5,7 @@ import nl.sri.zentao.entity.ZtTask;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -21,4 +22,6 @@ public interface ZtTaskMapper extends BaseMapper<ZtTask> {
     List<String> getStatusList();
 
     Map<String,Object> getStatusInfo(@Param("project") String project,@Param("userName") String userName);
+
+    String getConsumedSum(@Param("project") String project,@Param("date") LocalDate date);
 }
