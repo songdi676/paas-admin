@@ -48,12 +48,6 @@ spring:
           url: jdbc:log4jdbc:mysql://10.1.8.33:23306/paas-admin?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&zeroDateTimeBehavior=convertToNull
           username: root
           password: ag
-        zt:
-          db-type: com.alibaba.druid.pool.DruidDataSource
-          driverClassName: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-          url: jdbc:log4jdbc:mysql://10.1.8.33:23306/zt?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&zeroDateTimeBehavior=convertToNull
-          username: root
-          password: ag
 logging:
   level:
     nl.sri.*: debug

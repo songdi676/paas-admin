@@ -5,6 +5,8 @@ import nl.sri.zentao.entity.ZtTask;
 import nl.sri.zentao.mapper.ZtTaskMapper;
 import nl.sri.zentao.service.IZtTaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service;
  * @since 2020-07-22
  */
 @Service
-@DS("zt")
+@Primary
 public class ZtTaskServiceImpl extends ServiceImpl<ZtTaskMapper, ZtTask> implements IZtTaskService {
 
 }

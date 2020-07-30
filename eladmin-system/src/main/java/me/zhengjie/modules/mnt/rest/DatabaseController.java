@@ -26,6 +26,7 @@ import me.zhengjie.modules.mnt.service.dto.DatabaseDto;
 import me.zhengjie.modules.mnt.service.dto.DatabaseQueryCriteria;
 import me.zhengjie.modules.mnt.util.SqlUtils;
 import me.zhengjie.utils.FileUtil;
+import me.zhengjie.utils.StringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,15 +73,17 @@ public class DatabaseController {
 
     @ApiOperation("获取当前所有数据源")
     @GetMapping(value = "/dynamic-datasource")
-    public ResponseEntity<Object> dataSourceList() {
+    public ResponseEntity<Object> dataSourceList(String type) {
         List<Map<String, String>> re = new ArrayList<>();
 
         DynamicRoutingDataSource ds = (DynamicRoutingDataSource)dataSource;
         for (String name : ds.getCurrentDataSources().keySet()) {
-            Map<String, String> item = new HashMap<>();
-            item.put("lable", name);
-            item.put("value", name);
-            re.add(item);
+            if(StringUtils.isNotEmpty(type)&& name.contains(type)){
+                Map<String, String> item = new HashMap<>();
+                item.put("lable", name);
+                item.put("value", name);
+                re.add(item);
+            }
         }
         return new ResponseEntity<>(re, HttpStatus.OK);
     }

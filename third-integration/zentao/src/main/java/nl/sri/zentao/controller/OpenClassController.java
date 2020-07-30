@@ -28,6 +28,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/zentao")
 @RequiredArgsConstructor
+@DS("#header.DataSource")
 public class OpenClassController {
 
     @Autowired
@@ -63,7 +64,7 @@ public class OpenClassController {
      */
     @PostMapping("/getProjectList")
     @ResponseBody
-    @DS("zt")
+    
     public Page<ZtProject> getProjectList(@RequestBody RequestVo<ZtProject> requestVo) {
         Page<ZtProject> ztProjectPage = ztProjectMapper.selectPage(new Page<ZtProject>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()), new QueryWrapper<ZtProject>());
         return ztProjectPage;
@@ -77,7 +78,7 @@ public class OpenClassController {
      */
     @PostMapping("/getUserList")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<List<ZtUser>> getUserList(@RequestBody RequestVo<ZtUser> requestVo) {
         ResponseVo<List<ZtUser>> responseVo = new ResponseVo<>();
         List<ZtUser> result = new ArrayList<>();
@@ -112,7 +113,7 @@ public class OpenClassController {
      */
     @PostMapping("/getUserRoleList")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<List<Map<String, Object>>> getUserRoleList() {
         ResponseVo<List<Map<String, Object>>> responseVo = new ResponseVo<>();
         List<Map<String, Object>> userRoleList = ztUserMapper.getUserRoleList();
@@ -136,7 +137,7 @@ public class OpenClassController {
      */
     @GetMapping(value = "/getDeptList")
     @ResponseBody
-    @DS("zt")
+    
     public Page<ZtDept> getDeptList(@RequestBody RequestVo<ZtDept> requestVo) {
         Page<ZtDept> ztDeptPage = ztDeptMapper.selectPage(new Page<ZtDept>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()), new QueryWrapper<ZtDept>());
         return ztDeptPage;
@@ -150,7 +151,7 @@ public class OpenClassController {
      */
     @GetMapping("/getZtTaskInfo/{project}")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<Map<String, Object>> getZtTaskInfo(@PathVariable(name = "project") String project) {
         ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         Map<String, Object> statusInfo = ztTaskMapper.getStatusInfo(project, null);
@@ -166,7 +167,7 @@ public class OpenClassController {
      */
     @GetMapping("/getZtTaskInfoByUserName/{project}/{userName}")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<Map<String, Object>> getZtTaskInfoByUserName(@PathVariable(name = "project") String project, @PathVariable(name = "userName") String userName) {
         ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         Map<String, Object> statusInfo = ztTaskMapper.getStatusInfo(project, userName);
@@ -182,7 +183,7 @@ public class OpenClassController {
      */
     @GetMapping("/getEsTimate/{project}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getEsTimate(@PathVariable(name = "project") String project) {
         Integer result = 0;
         List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
@@ -201,7 +202,7 @@ public class OpenClassController {
      */
     @GetMapping("/getConsumed/{project}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getConsumed(@PathVariable(name = "project") String project) {
         Integer result = 0;
         List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
@@ -220,7 +221,7 @@ public class OpenClassController {
      */
     @GetMapping("/getLeft/{project}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getLeft(@PathVariable(name = "project") String project) {
         Integer result = 0;
         List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
@@ -239,7 +240,7 @@ public class OpenClassController {
      */
     @GetMapping("/getDeadLine/{project}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getDeadLine(@PathVariable(name = "project") String project) {
         Integer result = 0;
         List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
@@ -271,7 +272,7 @@ public class OpenClassController {
      */
     @GetMapping("/getTaskTimeInfo/{project}")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<Map<String, Object>> getTaskTimeInfo(@PathVariable(name = "project") String project) {
         ResponseVo<Map<String, Object>> responseVo=new ResponseVo<>();
         Integer estimate = 0;
@@ -325,7 +326,7 @@ public class OpenClassController {
      */
     @GetMapping("/getTaskTimeInfoByUserName/{project}/{userName}")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<Map<String, Object>> getTaskTimeInfoByUserName(@PathVariable(name = "project") String project,
                                                                      @PathVariable(name = "userName") String userName) {
         ResponseVo<Map<String, Object>> responseVo=new ResponseVo<>();
@@ -373,7 +374,7 @@ public class OpenClassController {
      */
     @GetMapping("/getUserTask/{project}/{userName}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getUserTask(@PathVariable(name = "project") String project,
                                @PathVariable(name = "userName") String userName) {
         return ztTaskMapper.selectCount(new QueryWrapper<ZtTask>()
@@ -389,7 +390,7 @@ public class OpenClassController {
      */
     @GetMapping("/getUserDoingTask/{project}/{userName}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getUserDoingTask(@PathVariable(name = "project") String project,
                                     @PathVariable(name = "userName") String userName) {
         return ztTaskMapper.selectCount(new QueryWrapper<ZtTask>()
@@ -406,7 +407,7 @@ public class OpenClassController {
      */
     @GetMapping("/getUserClosedTask/{project}/{userName}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getUserClosedTask(@PathVariable(name = "project") String project,
                                      @PathVariable(name = "userName") String userName) {
         return ztTaskMapper.selectCount(new QueryWrapper<ZtTask>()
@@ -423,7 +424,7 @@ public class OpenClassController {
      */
     @GetMapping("/getUserEstimateTask/{project}/{userName}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getUserEstimateTask(@PathVariable(name = "project") String project,
                                        @PathVariable(name = "userName") String userName) {
         Integer estimate = 0;
@@ -444,7 +445,7 @@ public class OpenClassController {
      */
     @GetMapping("/getUserConsumedTask/{project}/{userName}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getUserConsumedTask(@PathVariable(name = "project") String project,
                                        @PathVariable(name = "userName") String userName) {
         Integer consumed = 0;
@@ -466,7 +467,7 @@ public class OpenClassController {
      */
     @GetMapping("/getUserDeadLine/{project}/{userName}")
     @ResponseBody
-    @DS("zt")
+    
     public Integer getUserDeadLine(@PathVariable(name = "project") String project,
                                    @PathVariable(name = "userName") String userName) {
         Integer result = 0;
@@ -498,7 +499,7 @@ public class OpenClassController {
      */
     @GetMapping("/getZtProjectCycle/{projectId}")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<Map<String, Object>> getUserEstimateTask(@PathVariable(name = "projectId") String projectId) {
         ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         ZtProject ztProject = ztProjectMapper.selectById(projectId);
@@ -517,7 +518,7 @@ public class OpenClassController {
      */
     @PostMapping("/getZtProjectList")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<List<ZtProject>> getZtProjectList(@RequestBody PageInfo pageInfo) {
         ResponseVo<List<ZtProject>> responseVo = new ResponseVo<>();
         Page page = new Page();
@@ -540,7 +541,7 @@ public class OpenClassController {
      */
     @PostMapping("/getZtProductList")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<List<ZtProduct>> getZtProductList(@RequestBody PageInfo pageInfo) {
         ResponseVo<List<ZtProduct>> responseVo = new ResponseVo<>();
         Page page = new Page();
@@ -562,7 +563,7 @@ public class OpenClassController {
      */
     @PostMapping("/getProductProjectList")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<List<ZtProject>> getProductProjectList(@RequestBody RequestVo<String> req) {
         ResponseVo<List<ZtProject>> responseVo = new ResponseVo<>();
         QueryWrapper<ZtProjectproduct> wrapper = new QueryWrapper<>();
@@ -587,7 +588,7 @@ public class OpenClassController {
      */
     @GetMapping("/getBugInfo/{projectId}")
     @ResponseBody
-    @DS("zt")
+    
     public ResponseVo<Map<String, Object>> getBugInfo(@PathVariable("projectId") String projectId) {
         ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         responseVo.setContent(ztBugMapper.getBugInfo(projectId));
