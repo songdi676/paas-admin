@@ -8,18 +8,14 @@ import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 import lombok.RequiredArgsConstructor;
+import nl.sri.vo.DataBoxVo;
 import nl.sri.zentao.entity.ResponseVo;
-import nl.sri.zentao.entity.ZtBug;
 import nl.sri.zentao.entity.ZtTask;
-import nl.sri.zentao.entity.vo.DataBoxVo;
-import nl.sri.zentao.mapper.ZtProjectMapper;
 import nl.sri.zentao.service.IZtTaskService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 

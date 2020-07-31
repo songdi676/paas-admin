@@ -1,4 +1,4 @@
-package nl.sri.zentao.entity.vo;
+package nl.sri.vo;
 
 public class DataBoxSubDataVo {
     private String title;

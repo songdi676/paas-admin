@@ -1,7 +1,5 @@
 package nl.sri.zentao.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,13 +8,10 @@ import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 import lombok.RequiredArgsConstructor;
+import nl.sri.vo.DataBoxVo;
 import nl.sri.zentao.entity.ResponseVo;
 import nl.sri.zentao.entity.ZtBug;
-import nl.sri.zentao.entity.ZtTask;
-import nl.sri.zentao.entity.vo.DataBoxSubDataVo;
-import nl.sri.zentao.entity.vo.DataBoxVo;
 import nl.sri.zentao.service.IZtBugService;
-import nl.sri.zentao.service.IZtTaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

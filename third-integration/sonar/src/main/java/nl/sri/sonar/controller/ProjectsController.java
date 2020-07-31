@@ -1,5 +1,7 @@
 package nl.sri.sonar.controller;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -7,9 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.utils.SecurityUtils;
 import nl.sri.sonar.entity.Issues;
-import nl.sri.sonar.service.IIssuesService;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.sri.sonar.entity.Projects;
+import nl.sri.sonar.service.IProjectsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,22 +24,20 @@ import org.springframework.stereotype.Controller;
  * </p>
  *
  * @author songdi
- * @since 2020-07-15
+ * @since 2020-07-31
  */
 @Controller
-@RequestMapping("/sonar/issues")
 @RequiredArgsConstructor
-public class IssuesController {
+@RequestMapping("/sonar/projects")
+public class ProjectsController {
 
-    @Autowired
-    private IIssuesService issuesService;
+    private final IProjectsService projectsService;
 
-    @ApiOperation("查询issues")
+    @ApiOperation("查询projects")
     @GetMapping(value = "")
-    public ResponseEntity<Object> list(Issues issues, Page<Issues> ss) {
-        //测试提交
-        String userName = SecurityUtils.getCurrentUsername();
-        return new ResponseEntity<>(issuesService.page(ss, Wrappers.<Issues>query(issues).eq("author_login", userName)),
-            HttpStatus.OK);
+    public ResponseEntity<List<Projects>> list(Projects projects, Page<Projects> page) {
+        List<Projects> list = projectsService.list(Wrappers.<Projects>query(projects));
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
 }

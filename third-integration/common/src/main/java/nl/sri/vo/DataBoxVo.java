@@ -1,4 +1,4 @@
-package nl.sri.zentao.entity.vo;
+package nl.sri.vo;
 
 import java.util.ArrayList;
 import java.util.List;

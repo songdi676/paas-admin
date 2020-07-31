@@ -9,18 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sonar</artifactId>
+    <artifactId>common</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>me.zhengjie</groupId>
-            <artifactId>eladmin-common</artifactId>
-            <version>2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>nl.paas</groupId>
-            <artifactId>common</artifactId>
-            <version>2.5</version>
-        </dependency>
-    </dependencies>
+
 </project>
