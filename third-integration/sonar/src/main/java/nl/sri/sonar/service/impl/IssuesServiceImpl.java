@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Primary
-@DS("#header.DataSource")
+@DS("#header.sonarDataSource")
 public class IssuesServiceImpl extends ServiceImpl<IssuesMapper, Issues> implements IIssuesService {
 
 }
