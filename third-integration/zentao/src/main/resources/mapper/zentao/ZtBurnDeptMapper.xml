@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="nl.sri.zentao.mapper.ZtBurnDeptMapper">
 
-    <select id="getZtBurnDeptByProject" resultType="java.util.Map">
-        SELECT  UNIX_TIMESTAMP(date) as time,`left` as value,dept_name as metric
+    <select id="getZtBurnDeptByProject" resultType="nl.sri.zentao.entity.vo.ZtBurnDeptVo">
+        SELECT  date as time,`left` as value,dept_name as metric
             FROM zt_burn_dept
             where project = #{project}
             ORDER BY time;
