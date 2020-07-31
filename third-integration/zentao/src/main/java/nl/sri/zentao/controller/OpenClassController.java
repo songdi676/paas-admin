@@ -684,7 +684,6 @@ public class OpenClassController {
      */
     @GetMapping("/getBugInfo/{projectId}")
     @ResponseBody
-    
     public ResponseVo<Map<String, Object>> getBugInfo(@PathVariable("projectId") String projectId) {
         ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         responseVo.setContent(ztBugMapper.getBugInfo(projectId));
@@ -698,11 +697,27 @@ public class OpenClassController {
      * @return
      * @Author wurunxiang
      */
-    @GetMapping("/getDeptInfo")
+    /*@GetMapping("/getDeptInfo")
     @ResponseBody
     public ResponseVo<List<ZtDept>> getDeptInfo() {
         ResponseVo<List<ZtDept>> responseVo = new ResponseVo<>();
         responseVo.setContent(ztDeptMapper.selectList(new QueryWrapper<ZtDept>()));
         return responseVo;
+    }*/
+
+    /**
+     * 根据产品id获取bug信息
+     *
+     * @return
+     * @Author wurunxiang
+     */
+    @PostMapping("/getDeptInfo")
+    @ResponseBody
+    public ResponseVo<Object> getDeptInfo() {
+        ResponseVo<Object> responseVo = new ResponseVo<>();
+        responseVo.setContent(ztDeptMapper.selectList(new QueryWrapper<ZtDept>()));
+        return responseVo;
     }
+
+
 }
