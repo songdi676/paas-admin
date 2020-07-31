@@ -711,7 +711,7 @@ public class OpenClassController {
      * @return
      * @Author wurunxiang
      */
-    @PostMapping("/getDeptInfo")
+    @GetMapping("/getDeptInfo")
     @ResponseBody
     public ResponseVo<Object> getDeptInfo() {
         ResponseVo<Object> responseVo = new ResponseVo<>();
