@@ -34,7 +34,7 @@ public class SnapshotsController {
 
     @ApiOperation("查询snapshots")
     @GetMapping(value = "")
-    public ResponseEntity<List<Snapshots>> list(Snapshots snapshots, Page<Snapshots> page) {
+    public ResponseEntity<List<Snapshots>> list(Snapshots snapshots) {
         List<Snapshots> list = snapshotsService.list(Wrappers.<Snapshots>query(snapshots));
         return new ResponseEntity<>(list, HttpStatus.OK);
     }

@@ -2,12 +2,15 @@ package nl.sri.sonar.entity;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author songdi
@@ -32,15 +35,15 @@ public class ProjectMeasures implements Serializable {
     private String description;
 
     private Integer personId;
-
+    @TableField("variation_value_1")
     private BigDecimal variationValue1;
-
+    @TableField("variation_value_2")
     private BigDecimal variationValue2;
-
+    @TableField("variation_value_3")
     private BigDecimal variationValue3;
-
+    @TableField("variation_value_4")
     private BigDecimal variationValue4;
-
+    @TableField("variation_value_5")
     private BigDecimal variationValue5;
 
     private String measureData;
@@ -48,6 +51,5 @@ public class ProjectMeasures implements Serializable {
     private String componentUuid;
 
     private String analysisUuid;
-
 
 }

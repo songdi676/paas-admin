@@ -10,24 +10,29 @@ public class DataBoxVo {
     private boolean showIcon;
     private String icon;
     private String color;
-    private List<DataBoxSubDataVo> subData=new ArrayList<>();;
+    private List<DataBoxSubDataVo> subData = new ArrayList<>();
+    ;
 
     public DataBoxVo() {
     }
-
-
 
     public DataBoxVo(String title, int count) {
         this.title = title;
         this.count = count;
     }
-    public DataBoxVo(String title, int count,Map<String, Long> statusMap) {
+
+    public DataBoxVo(String title, int count, Map<String, Long> statusMap) {
         this.title = title;
         this.count = count;
-        statusMap.forEach((k,v)->{
-            DataBoxSubDataVo dataBoxSubDataVo=new DataBoxSubDataVo(k,v);
+        statusMap.forEach((k, v) -> {
+            DataBoxSubDataVo dataBoxSubDataVo = new DataBoxSubDataVo(k, v);
             this.subData.add(dataBoxSubDataVo);
         });
+    }
+
+    public void addSub(String k, String v) {
+        DataBoxSubDataVo dataBoxSubDataVo = new DataBoxSubDataVo(k, v);
+        this.subData.add(dataBoxSubDataVo);
     }
 
     public String getTitle() {
