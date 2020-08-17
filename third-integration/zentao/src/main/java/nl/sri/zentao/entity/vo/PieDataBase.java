@@ -4,11 +4,12 @@ public class PieDataBase {
 
     private String name;
 
-    private String value;
+    private Object value;
 
-    PieDataBase(){}
+    public PieDataBase() {
+    }
 
-    public PieDataBase(String name, String value){
+    public PieDataBase(String name, Object value) {
         this.name = name;
         this.value = value;
     }
@@ -21,7 +22,7 @@ public class PieDataBase {
         this.name = name;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 

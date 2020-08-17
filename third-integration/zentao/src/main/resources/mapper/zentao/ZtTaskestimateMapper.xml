@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="nl.sri.zentao.mapper.ZtTaskestimateMapper">
-
+    <select id="getTaskEstimeByProject" resultType="nl.sri.zentao.entity.vo.DeptTaskEstime">
+    select t.*, u.dept, d.name as deptName
+    from zt_taskestimate t,
+         zt_user u,
+         zt_dept d
+    where t.account = u.account
+      and u.dept = d.id
+      and exists(select id from zt_task task where t.task = task.id and task.project = #{project})
+    </select>
 </mapper>

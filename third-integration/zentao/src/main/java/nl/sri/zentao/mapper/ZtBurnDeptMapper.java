@@ -1,7 +1,9 @@
 package nl.sri.zentao.mapper;
 
 import nl.sri.zentao.entity.ZtBurnDept;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
 import nl.sri.zentao.entity.vo.ZtBurnDeptVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,7 +12,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author wurunxiang
@@ -18,5 +20,5 @@ import java.util.Map;
  */
 public interface ZtBurnDeptMapper extends BaseMapper<ZtBurnDept> {
 
-    List<ZtBurnDeptVo> getZtBurnDeptByProject(@Param("project") String project);
+    List<ZtBurnDeptVo> getZtBurnDeptByProject(@Param("project") Integer project);
 }

@@ -1,7 +1,11 @@
 package nl.sri.zentao.entity.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class PieDataBaseList {
 
     private String name;
@@ -9,45 +13,21 @@ public class PieDataBaseList {
     private String type = "line";
 
     private String stack = "";
+    private Integer barWidth = 20;
 
-    private List<String> data;
+    private List<Object> data = new ArrayList<>();
 
-    public PieDataBaseList(){}
+    public PieDataBaseList() {
+    }
 
-    public PieDataBaseList(String name, List<String> data){
+    public PieDataBaseList(String name, List<Object> data) {
         this.name = name;
         this.data = data;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getStack() {
-        return stack;
-    }
-
-    public void setStack(String stack) {
-        this.stack = stack;
-    }
-
-    public List<String> getData() {
+    public List<Object> addData(Object item) {
+        data.add(item);
         return data;
     }
 
-    public void setData(List<String> data) {
-        this.data = data;
-    }
 }

@@ -25,7 +25,7 @@ public class ZtBurnDeptServiceImpl extends ServiceImpl<ZtBurnDeptMapper, ZtBurnD
     @Autowired
     private ZtBurnDeptMapper ztBurnDeptMapper;
 
-    public List<ZtBurnDeptVo> getZtBurnDept(String project) {
+    public List<ZtBurnDeptVo> getZtBurnDept(Integer project) {
         List<ZtBurnDeptVo> ztBurnDeptVos = ztBurnDeptMapper.getZtBurnDeptByProject(project);
         return ztBurnDeptVos;
     }

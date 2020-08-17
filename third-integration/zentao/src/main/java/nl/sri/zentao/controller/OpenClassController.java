@@ -1,9 +1,9 @@
 package nl.sri.zentao.controller;
 
-
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import lombok.RequiredArgsConstructor;
 import nl.sri.zentao.entity.*;
 import nl.sri.zentao.entity.vo.PieDataBase;
@@ -56,7 +56,6 @@ public class OpenClassController {
     @Autowired
     private ZtBugMapper ztBugMapper;
 
-
     /**
      * 获取迭代列表
      *
@@ -65,9 +64,11 @@ public class OpenClassController {
      */
     @PostMapping("/getProjectList")
     @ResponseBody
-    
+
     public Page<ZtProject> getProjectList(@RequestBody RequestVo<ZtProject> requestVo) {
-        Page<ZtProject> ztProjectPage = ztProjectMapper.selectPage(new Page<ZtProject>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()), new QueryWrapper<ZtProject>());
+        Page<ZtProject> ztProjectPage = ztProjectMapper.selectPage(
+            new Page<ZtProject>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()),
+            new QueryWrapper<ZtProject>());
         return ztProjectPage;
     }
 
@@ -79,15 +80,17 @@ public class OpenClassController {
      */
     @PostMapping("/getUserList")
     @ResponseBody
-    
+
     public ResponseVo<List<ZtUser>> getUserList(@RequestBody RequestVo<ZtUser> requestVo) {
         ResponseVo<List<ZtUser>> responseVo = new ResponseVo<>();
         List<ZtUser> result = new ArrayList<>();
         QueryWrapper<ZtUser> ztUserQueryWrapper = new QueryWrapper<>();
-        if (requestVo.getParams().getDept()!=null){
-            ztUserQueryWrapper.eq("dept",requestVo.getParams().getDept());
+        if (requestVo.getParams().getDept() != null) {
+            ztUserQueryWrapper.eq("dept", requestVo.getParams().getDept());
         }
-        Page<ZtUser> ztUserPage = ztUserMapper.selectPage(new Page<ZtUser>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()), ztUserQueryWrapper);
+        Page<ZtUser> ztUserPage = ztUserMapper
+            .selectPage(new Page<ZtUser>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()),
+                ztUserQueryWrapper);
         List<ZtUser> ztUsers = ztUserPage.getRecords();
         List<ZtGroup> ztGroups = ztGroupMapper.selectList(new QueryWrapper<>());
         PageInfo pageInfo = new PageInfo();
@@ -109,7 +112,6 @@ public class OpenClassController {
         return responseVo;
     }
 
-
     /**
      * 获取用户分类职位信息总览
      *
@@ -118,7 +120,7 @@ public class OpenClassController {
      */
     @PostMapping("/getUserRoleList")
     @ResponseBody
-    
+
     public ResponseVo<List<Map<String, Object>>> getUserRoleList() {
         ResponseVo<List<Map<String, Object>>> responseVo = new ResponseVo<>();
         List<Map<String, Object>> userRoleList = ztUserMapper.getUserRoleList();
@@ -142,9 +144,11 @@ public class OpenClassController {
      */
     @GetMapping(value = "/getDeptList")
     @ResponseBody
-    
+
     public Page<ZtDept> getDeptList(@RequestBody RequestVo<ZtDept> requestVo) {
-        Page<ZtDept> ztDeptPage = ztDeptMapper.selectPage(new Page<ZtDept>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()), new QueryWrapper<ZtDept>());
+        Page<ZtDept> ztDeptPage = ztDeptMapper
+            .selectPage(new Page<ZtDept>(requestVo.getPageInfo().getPageNum(), requestVo.getPageInfo().getPageSize()),
+                new QueryWrapper<ZtDept>());
         return ztDeptPage;
     }
 
@@ -156,7 +160,7 @@ public class OpenClassController {
      */
     @GetMapping("/getZtTaskInfo/{project}")
     @ResponseBody
-    
+
     public ResponseVo<Map<String, Object>> getZtTaskInfo(@PathVariable(name = "project") String project) {
         ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         Map<String, Object> statusInfo = ztTaskMapper.getStatusInfo(project, null);
@@ -172,8 +176,9 @@ public class OpenClassController {
      */
     @GetMapping("/getZtTaskInfoByUserName/{project}/{userName}")
     @ResponseBody
-    
-    public ResponseVo<Map<String, Object>> getZtTaskInfoByUserName(@PathVariable(name = "project") String project, @PathVariable(name = "userName") String userName) {
+
+    public ResponseVo<Map<String, Object>> getZtTaskInfoByUserName(@PathVariable(name = "project") String project,
+        @PathVariable(name = "userName") String userName) {
         ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         Map<String, Object> statusInfo = ztTaskMapper.getStatusInfo(project, userName);
         responseVo.setContent(statusInfo);
@@ -188,11 +193,10 @@ public class OpenClassController {
      */
     @GetMapping("/getEsTimate/{project}")
     @ResponseBody
-    
+
     public Integer getEsTimate(@PathVariable(name = "project") String project) {
         Integer result = 0;
-        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project));
+        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project));
         for (ZtTask item : tasks) {
             result += item.getEstimate().intValue();
         }
@@ -207,11 +211,10 @@ public class OpenClassController {
      */
     @GetMapping("/getConsumed/{project}")
     @ResponseBody
-    
+
     public Integer getConsumed(@PathVariable(name = "project") String project) {
         Integer result = 0;
-        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project));
+        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project));
         for (ZtTask item : tasks) {
             result += item.getConsumed().intValue();
         }
@@ -226,11 +229,10 @@ public class OpenClassController {
      */
     @GetMapping("/getLeft/{project}")
     @ResponseBody
-    
+
     public Integer getLeft(@PathVariable(name = "project") String project) {
         Integer result = 0;
-        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project));
+        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project));
         for (ZtTask item : tasks) {
             result += item.getLeft().intValue();
         }
@@ -245,11 +247,10 @@ public class OpenClassController {
      */
     @GetMapping("/getDeadLine/{project}")
     @ResponseBody
-    
+
     public Integer getDeadLine(@PathVariable(name = "project") String project) {
         Integer result = 0;
-        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project));
+        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         SimpleDateFormat sdf1 = new SimpleDateFormat("mm");
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd");
@@ -277,15 +278,14 @@ public class OpenClassController {
      */
     @GetMapping("/getTaskTimeInfo/{project}")
     @ResponseBody
-    
+
     public ResponseVo<Map<String, Object>> getTaskTimeInfo(@PathVariable(name = "project") String project) {
-        ResponseVo<Map<String, Object>> responseVo=new ResponseVo<>();
+        ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         Integer estimate = 0;
         Integer consumed = 0;
         Integer left = 0;
         Integer deadlineInt = 0;
-        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project));
+        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         SimpleDateFormat sdf1 = new SimpleDateFormat("mm");
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd");
@@ -306,21 +306,21 @@ public class OpenClassController {
             }
         }
         List<PieDataBase> seriesData = new ArrayList<>();
-        seriesData.add(new PieDataBase("预计消耗",estimate.toString()));
-        seriesData.add(new PieDataBase("已消耗",consumed.toString()));
-        seriesData.add(new PieDataBase("剩余",left.toString()));
-        seriesData.add(new PieDataBase("超时",deadlineInt.toString()));
-        seriesData.add(new PieDataBase("昨日消耗",ztTaskMapper.getConsumedSum(project,LocalDate.now())));
+        seriesData.add(new PieDataBase("预计消耗", estimate.toString()));
+        seriesData.add(new PieDataBase("已消耗", consumed.toString()));
+        seriesData.add(new PieDataBase("剩余", left.toString()));
+        seriesData.add(new PieDataBase("超时", deadlineInt.toString()));
+        seriesData.add(new PieDataBase("昨日消耗", ztTaskMapper.getConsumedSum(project, LocalDate.now())));
         List<String> legendData = new ArrayList<>();
         legendData.add("预计消耗");
         legendData.add("已消耗");
         legendData.add("剩余");
         legendData.add("超时");
         legendData.add("昨日消耗");
-        Map<String,Object> result = new HashMap<>();
-        result.put("name","迭代时长消耗信息");
-        result.put("legendData",legendData);
-        result.put("seriesData",seriesData);
+        Map<String, Object> result = new HashMap<>();
+        result.put("name", "迭代时长消耗信息");
+        result.put("legendData", legendData);
+        result.put("seriesData", seriesData);
         responseVo.setContent(result);
         return responseVo;
     }
@@ -333,18 +333,17 @@ public class OpenClassController {
      */
     @GetMapping("/getTaskTimeInfoByUserName/{project}/{userName}")
     @ResponseBody
-    
+
     public ResponseVo<Map<String, Object>> getTaskTimeInfoByUserName(@PathVariable(name = "project") String project,
-                                                                     @PathVariable(name = "userName") String userName) {
-        ResponseVo<Map<String, Object>> responseVo=new ResponseVo<>();
+        @PathVariable(name = "userName") String userName) {
+        ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         Map<String, Object> map = new HashMap<>();
         Integer estimate = 0;
         Integer consumed = 0;
         Integer left = 0;
         Integer deadlineInt = 0;
-        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project)
-                .eq("finishedBy",userName));
+        List<ZtTask> tasks =
+            ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project).eq("finishedBy", userName));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         SimpleDateFormat sdf1 = new SimpleDateFormat("mm");
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd");
@@ -364,14 +363,13 @@ public class OpenClassController {
                 }
             }
         }
-        map.put("estimate",estimate);
-        map.put("consumed",consumed);
-        map.put("left",left);
-        map.put("deadlineInt",deadlineInt);
+        map.put("estimate", estimate);
+        map.put("consumed", consumed);
+        map.put("left", left);
+        map.put("deadlineInt", deadlineInt);
         responseVo.setContent(map);
         return responseVo;
     }
-
 
     /**
      * (个人效率指标)迭代分配任务数
@@ -381,12 +379,10 @@ public class OpenClassController {
      */
     @GetMapping("/getUserTask/{project}/{userName}")
     @ResponseBody
-    
+
     public Integer getUserTask(@PathVariable(name = "project") String project,
-                               @PathVariable(name = "userName") String userName) {
-        return ztTaskMapper.selectCount(new QueryWrapper<ZtTask>()
-                .eq("project", project)
-                .eq("assignedTo", userName));
+        @PathVariable(name = "userName") String userName) {
+        return ztTaskMapper.selectCount(new QueryWrapper<ZtTask>().eq("project", project).eq("assignedTo", userName));
     }
 
     /**
@@ -397,13 +393,11 @@ public class OpenClassController {
      */
     @GetMapping("/getUserDoingTask/{project}/{userName}")
     @ResponseBody
-    
+
     public Integer getUserDoingTask(@PathVariable(name = "project") String project,
-                                    @PathVariable(name = "userName") String userName) {
-        return ztTaskMapper.selectCount(new QueryWrapper<ZtTask>()
-                .eq("project", project)
-                .eq("status", "doing")
-                .eq("assignedTo", userName));
+        @PathVariable(name = "userName") String userName) {
+        return ztTaskMapper.selectCount(
+            new QueryWrapper<ZtTask>().eq("project", project).eq("status", "doing").eq("assignedTo", userName));
     }
 
     /**
@@ -414,13 +408,11 @@ public class OpenClassController {
      */
     @GetMapping("/getUserClosedTask/{project}/{userName}")
     @ResponseBody
-    
+
     public Integer getUserClosedTask(@PathVariable(name = "project") String project,
-                                     @PathVariable(name = "userName") String userName) {
-        return ztTaskMapper.selectCount(new QueryWrapper<ZtTask>()
-                .eq("project", project)
-                .eq("status", "closed")
-                .eq("assignedTo", userName));
+        @PathVariable(name = "userName") String userName) {
+        return ztTaskMapper.selectCount(
+            new QueryWrapper<ZtTask>().eq("project", project).eq("status", "closed").eq("assignedTo", userName));
     }
 
     /**
@@ -431,13 +423,12 @@ public class OpenClassController {
      */
     @GetMapping("/getUserEstimateTask/{project}/{userName}")
     @ResponseBody
-    
+
     public Integer getUserEstimateTask(@PathVariable(name = "project") String project,
-                                       @PathVariable(name = "userName") String userName) {
+        @PathVariable(name = "userName") String userName) {
         Integer estimate = 0;
-        List<ZtTask> ztTasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project)
-                .eq("assignedTo", userName));
+        List<ZtTask> ztTasks =
+            ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project).eq("assignedTo", userName));
         for (ZtTask item : ztTasks) {
             estimate += Integer.parseInt(item.getEstimate() + "");
         }
@@ -452,14 +443,12 @@ public class OpenClassController {
      */
     @GetMapping("/getUserConsumedTask/{project}/{userName}")
     @ResponseBody
-    
+
     public Integer getUserConsumedTask(@PathVariable(name = "project") String project,
-                                       @PathVariable(name = "userName") String userName) {
+        @PathVariable(name = "userName") String userName) {
         Integer consumed = 0;
-        List<ZtTask> ztTasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project)
-                .eq("status", "done")
-                .eq("assignedTo", userName));
+        List<ZtTask> ztTasks = ztTaskMapper.selectList(
+            new QueryWrapper<ZtTask>().eq("project", project).eq("status", "done").eq("assignedTo", userName));
         for (ZtTask item : ztTasks) {
             consumed += Integer.parseInt(item.getConsumed() + "");
         }
@@ -474,13 +463,12 @@ public class OpenClassController {
      */
     @GetMapping("/getUserDeadLine/{project}/{userName}")
     @ResponseBody
-    
+
     public Integer getUserDeadLine(@PathVariable(name = "project") String project,
-                                   @PathVariable(name = "userName") String userName) {
+        @PathVariable(name = "userName") String userName) {
         Integer result = 0;
-        List<ZtTask> tasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project)
-                .eq("lastEditedBy", userName));
+        List<ZtTask> tasks =
+            ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project).eq("lastEditedBy", userName));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         SimpleDateFormat sdf1 = new SimpleDateFormat("mm");
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd");
@@ -489,15 +477,14 @@ public class OpenClassController {
                 LocalDate deadline = item.getDeadline();
                 Date date = new Date();
                 if (Integer.parseInt(sdf.format(date)) > deadline.getYear()
-                        || Integer.parseInt(sdf1.format(date)) > deadline.getMonthValue()
-                        || Integer.parseInt(sdf2.format(date)) > deadline.getDayOfMonth()) {
+                    || Integer.parseInt(sdf1.format(date)) > deadline.getMonthValue()
+                    || Integer.parseInt(sdf2.format(date)) > deadline.getDayOfMonth()) {
                     result++;
                 }
             }
         }
         return result;
     }
-
 
     /**
      * 迭代分配任务信息
@@ -508,35 +495,37 @@ public class OpenClassController {
     @GetMapping("/getTaskInfo/{project}")
     @ResponseBody
     public ResponseVo<List<PieDataBase>> getTaskInfo(@PathVariable(name = "project") String project) {
-        ResponseVo<List<PieDataBase>> responseVo=new ResponseVo<>();
-        List<ZtTask> ztTasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project));
+        ResponseVo<List<PieDataBase>> responseVo = new ResponseVo<>();
+        List<ZtTask> ztTasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project));
         Integer total = ztTasks.size();
         Integer doing = 0;
         Integer closed = 0;
         Integer done = 0;
         Integer deadLine = 0;
-        for (ZtTask ztTask:ztTasks){
-            if ("doing".equals(ztTask.getStatus())){
+        for (ZtTask ztTask : ztTasks) {
+            if ("doing".equals(ztTask.getStatus())) {
                 doing++;
             }
-            if ("closed".equals(ztTask.getStatus())){
+            if ("closed".equals(ztTask.getStatus())) {
                 closed++;
             }
-            if ("done".equals(ztTask.getStatus())){
+            if ("done".equals(ztTask.getStatus())) {
                 done++;
             }
-            if ("deadLine".equals(ztTask.getStatus())){
+            if ("deadLine".equals(ztTask.getStatus())) {
                 deadLine++;
             }
         }
         NumberFormat nt = NumberFormat.getPercentInstance();
         nt.setMinimumFractionDigits(2);
         List<PieDataBase> seriesData = new ArrayList<>();
-        seriesData.add(new PieDataBase("进行中："+nt.format(doing.doubleValue()/total.doubleValue()),doing.toString()));
-        seriesData.add(new PieDataBase("关闭："+nt.format(closed.doubleValue()/total.doubleValue()),closed.toString()));
-        seriesData.add(new PieDataBase("完成："+nt.format(done.doubleValue()/total.doubleValue()),done.toString()));
-        seriesData.add(new PieDataBase("超时："+nt.format(deadLine.doubleValue()/total.doubleValue()),deadLine.toString()));
+        seriesData
+            .add(new PieDataBase("进行中：" + nt.format(doing.doubleValue() / total.doubleValue()), doing.toString()));
+        seriesData
+            .add(new PieDataBase("关闭：" + nt.format(closed.doubleValue() / total.doubleValue()), closed.toString()));
+        seriesData.add(new PieDataBase("完成：" + nt.format(done.doubleValue() / total.doubleValue()), done.toString()));
+        seriesData
+            .add(new PieDataBase("超时：" + nt.format(deadLine.doubleValue() / total.doubleValue()), deadLine.toString()));
         responseVo.setContent(seriesData);
         return responseVo;
     }
@@ -551,41 +540,39 @@ public class OpenClassController {
     @ResponseBody
     @DS("zt")
     public ResponseVo<List<PieDataBase>> getTaskInfoByUserName(@PathVariable(name = "project") String project,
-                                         @PathVariable(name = "userName") String userName) {
-        ResponseVo<List<PieDataBase>> responseVo=new ResponseVo<>();
-        List<ZtTask> ztTasks = ztTaskMapper.selectList(new QueryWrapper<ZtTask>()
-                .eq("project", project)
-                .eq("assignedTo", userName));
+        @PathVariable(name = "userName") String userName) {
+        ResponseVo<List<PieDataBase>> responseVo = new ResponseVo<>();
+        List<ZtTask> ztTasks =
+            ztTaskMapper.selectList(new QueryWrapper<ZtTask>().eq("project", project).eq("assignedTo", userName));
         Integer total = ztTasks.size();
         Integer doing = 0;
         Integer closed = 0;
         Integer done = 0;
         Integer deadLine = 0;
-        for (ZtTask ztTask:ztTasks){
-            if ("doing".equals(ztTask.getAssignedTo())){
+        for (ZtTask ztTask : ztTasks) {
+            if ("doing".equals(ztTask.getAssignedTo())) {
                 doing++;
             }
-            if ("closed".equals(ztTask.getAssignedTo())){
+            if ("closed".equals(ztTask.getAssignedTo())) {
                 closed++;
             }
-            if ("done".equals(ztTask.getAssignedTo())){
+            if ("done".equals(ztTask.getAssignedTo())) {
                 done++;
             }
-            if ("deadLine".equals(ztTask.getAssignedTo())){
+            if ("deadLine".equals(ztTask.getAssignedTo())) {
                 deadLine++;
             }
         }
         NumberFormat nt = NumberFormat.getPercentInstance();
         nt.setMinimumFractionDigits(2);
         List<PieDataBase> seriesData = new ArrayList<>();
-        seriesData.add(new PieDataBase("进行中："+nt.format(doing/total),doing.toString()));
-        seriesData.add(new PieDataBase("关闭："+nt.format(closed/total),closed.toString()));
-        seriesData.add(new PieDataBase("完成："+nt.format(done/total),done.toString()));
-        seriesData.add(new PieDataBase("超时："+nt.format(deadLine/total),deadLine.toString()));
+        seriesData.add(new PieDataBase("进行中：" + nt.format(doing / total), doing.toString()));
+        seriesData.add(new PieDataBase("关闭：" + nt.format(closed / total), closed.toString()));
+        seriesData.add(new PieDataBase("完成：" + nt.format(done / total), done.toString()));
+        seriesData.add(new PieDataBase("超时：" + nt.format(deadLine / total), deadLine.toString()));
         responseVo.setContent(seriesData);
         return responseVo;
     }
-
 
     /**
      * 获取迭代周期
@@ -595,13 +582,17 @@ public class OpenClassController {
      */
     @GetMapping("/getZtProjectCycle/{projectId}")
     @ResponseBody
-    
+
     public ResponseVo<Map<String, Object>> getUserEstimateTask(@PathVariable(name = "projectId") String projectId) {
         ResponseVo<Map<String, Object>> responseVo = new ResponseVo<>();
         ZtProject ztProject = ztProjectMapper.selectById(projectId);
         Map<String, Object> result = new HashMap<>();
-        result.put("begin", ztProject.getBegin().getYear() + ":" + ztProject.getBegin().getMonthValue() + ":" + ztProject.getBegin().getDayOfMonth());
-        result.put("end", ztProject.getEnd().getYear() + ":" + ztProject.getEnd().getMonthValue() + ":" + ztProject.getEnd().getDayOfMonth());
+        result.put("begin",
+            ztProject.getBegin().getYear() + ":" + ztProject.getBegin().getMonthValue() + ":" + ztProject.getBegin()
+                .getDayOfMonth());
+        result.put("end",
+            ztProject.getEnd().getYear() + ":" + ztProject.getEnd().getMonthValue() + ":" + ztProject.getEnd()
+                .getDayOfMonth());
         responseVo.setContent(result);
         return responseVo;
     }
@@ -614,20 +605,20 @@ public class OpenClassController {
      */
     @PostMapping("/getZtProjectList")
     @ResponseBody
-    
+
     public ResponseVo<List<ZtProject>> getZtProjectList(@RequestBody PageInfo pageInfo) {
         ResponseVo<List<ZtProject>> responseVo = new ResponseVo<>();
         Page page = new Page();
         page.setCurrent(pageInfo.getPageNum());
         page.setSize(pageInfo.getPageSize());
-        Page<ZtProject> ztProjectPage = ztProjectMapper.selectPage(page, new QueryWrapper<ZtProject>()
-                .eq("deleted", "0"));
+        Page<ZtProject> ztProjectPage =
+            ztProjectMapper.selectPage(page, new QueryWrapper<ZtProject>().eq("deleted", "0"));
         responseVo.setContent(ztProjectPage.getRecords());
-        PageInfo resultPageInfo = new PageInfo(Integer.parseInt(ztProjectPage.getCurrent() + ""), Integer.parseInt(ztProjectPage.getSize() + ""), Integer.parseInt(ztProjectPage.getTotal() + ""));
+        PageInfo resultPageInfo = new PageInfo(Integer.parseInt(ztProjectPage.getCurrent() + ""),
+            Integer.parseInt(ztProjectPage.getSize() + ""), Integer.parseInt(ztProjectPage.getTotal() + ""));
         responseVo.setPageInfo(resultPageInfo);
         return responseVo;
     }
-
 
     /**
      * 获取产品列表
@@ -637,16 +628,17 @@ public class OpenClassController {
      */
     @PostMapping("/getZtProductList")
     @ResponseBody
-    
+
     public ResponseVo<List<ZtProduct>> getZtProductList(@RequestBody PageInfo pageInfo) {
         ResponseVo<List<ZtProduct>> responseVo = new ResponseVo<>();
         Page page = new Page();
         page.setCurrent(pageInfo.getPageNum());
         page.setSize(pageInfo.getPageSize());
-        Page<ZtProduct> ztProductPage = ztProductMapper.selectPage(page, new QueryWrapper<ZtProduct>()
-                .eq("deleted", "0"));
+        Page<ZtProduct> ztProductPage =
+            ztProductMapper.selectPage(page, new QueryWrapper<ZtProduct>().eq("deleted", "0"));
         responseVo.setContent(ztProductPage.getRecords());
-        PageInfo resultPageInfo = new PageInfo(Integer.parseInt(ztProductPage.getCurrent() + ""), Integer.parseInt(ztProductPage.getSize() + ""), Integer.parseInt(ztProductPage.getTotal() + ""));
+        PageInfo resultPageInfo = new PageInfo(Integer.parseInt(ztProductPage.getCurrent() + ""),
+            Integer.parseInt(ztProductPage.getSize() + ""), Integer.parseInt(ztProductPage.getTotal() + ""));
         responseVo.setPageInfo(resultPageInfo);
         return responseVo;
     }
@@ -659,19 +651,19 @@ public class OpenClassController {
      */
     @PostMapping("/getProductProjectList")
     @ResponseBody
-    
+
     public ResponseVo<List<ZtProject>> getProductProjectList(@RequestBody RequestVo<String> req) {
         ResponseVo<List<ZtProject>> responseVo = new ResponseVo<>();
         QueryWrapper<ZtProjectproduct> wrapper = new QueryWrapper<>();
         if (req.getParams() != null) {
             wrapper.eq("product", req.getParams());
-        }
-        List<ZtProjectproduct> ztProjectproducts = ztProjectproductMapper.selectList(wrapper);
+        } List<ZtProjectproduct> ztProjectproducts = ztProjectproductMapper.selectList(wrapper);
         List<Integer> projects = new ArrayList<>();
         ztProjectproducts.forEach(ztProjectproduct -> {
             projects.add(ztProjectproduct.getProject());
         });
-        List<ZtProject> ztProjects = ztProjectMapper.selectList(new QueryWrapper<ZtProject>().in("id", projects));
+        List<ZtProject> ztProjects =
+            ztProjectMapper.selectList(new QueryWrapper<ZtProject>().in("id", projects).orderByDesc("id"));
         responseVo.setContent(ztProjects);
         return responseVo;
     }
@@ -689,7 +681,6 @@ public class OpenClassController {
         responseVo.setContent(ztBugMapper.getBugInfo(projectId));
         return responseVo;
     }
-
 
     /**
      * 获取分组信息
@@ -718,6 +709,5 @@ public class OpenClassController {
         responseVo.setContent(ztDeptMapper.selectList(new QueryWrapper<ZtDept>()));
         return responseVo;
     }
-
 
 }
