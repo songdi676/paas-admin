@@ -66,14 +66,14 @@ public class AppRun {
      */
     @GetMapping("/deployment")
     public String index(UpdateRequest updateRequest) throws IOException {
-        File file2 = new File(
+/*        File file2 = new File(
             "D:\\config20");
         FileReader reader = new FileReader(file2);
         String kubeconfigContents = IOHelpers.readFully(reader);
         Config config=Config.fromKubeconfig(null,kubeconfigContents,"D:\\config20");
-        KubernetesClient client = new DefaultKubernetesClient(config);
+        KubernetesClient client = new DefaultKubernetesClient(config);*/
 
-       // KubernetesClient client = new DefaultKubernetesClient();
+        KubernetesClient client = new DefaultKubernetesClient();
         Deployment deployment =
             client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload())
                 .get();
@@ -87,27 +87,11 @@ public class AppRun {
         if (updatedContainer == null) {
             return "没有找到容器" + updateRequest.getContainer();
         }
-        /*client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload())
-            .scale(0);*/
-        deployment.getSpec().getTemplate().getMetadata().getLabels().put("webhook-update","T"+DFY_MD_HMS.format(LocalDateTime.now()));
-        client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload()).patch(deployment);
-
-      /* client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload())
-            //.rolling()
-            .edit()
-            .editMetadata()
-            .addToLabels("webhook-update","T"+DFY_MD_HMS.format(LocalDateTime.now()))
-            .endMetadata()
-            .editSpec()
-            .editTemplate()
-            .editSpec()
-            .withContainers(Collections.singletonList(updatedContainer))
-            .endSpec()
-            .endTemplate()
-            .endSpec()
-            .done();
+        deployment.getSpec().getTemplate().getMetadata().getLabels()
+            .put("webhook-update", "T" + DFY_MD_HMS.format(LocalDateTime.now()));
         client.apps().deployments().inNamespace(updateRequest.getNamespace()).withName(updateRequest.getWorkload())
-            .scale(deployment.getSpec().getReplicas());*/
+            .patch(deployment);
+
         return "update successfully";
     }
 
